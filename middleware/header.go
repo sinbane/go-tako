@@ -19,6 +19,11 @@ var protectedHeaders = []string{
 	HeaderRequestId,
 }
 
+var requiredHeaders = []string{
+	HeaderApiVersion,
+	"Authorization",
+}
+
 func CheckHeaders(cfg *config.Config) Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -28,6 +33,14 @@ func CheckHeaders(cfg *config.Config) Middleware {
 					return
 				}
 			}
+
+			for _, header := range requiredHeaders {
+				if r.Header.Get(header) == "" {
+					http.Error(w, fmt.Sprintf("Header %s is required", header), http.StatusBadRequest)
+					return
+				}
+			}
+
 			next.ServeHTTP(w, r)
 		})
 	}

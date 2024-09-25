@@ -17,3 +17,8 @@ type CircuitBreaker struct {
 	MinRequests  int           `toml:"min_requests"`
 	FailureRatio float64       `toml:"failure_ratio"`
 }
+
+// JWT middleware config
+type JWT struct {
+	Secret string `toml:"secret"`
+}

@@ -32,6 +32,7 @@ func main() {
 		middleware.RequestID,
 		middleware.RemoteIP,
 		middleware.CircuitBreaker,
+		middleware.JWT,
 	)
 
 	// Start the server

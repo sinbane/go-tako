@@ -13,6 +13,7 @@ type Config struct {
 	CORS            CORS                      `toml:"cors"`
 	ServerId        string                    `toml:"server_id"`
 	CircuitBreakers map[string]CircuitBreaker `toml:"circuit_breakers"`
+	JWT             JWT                       `toml:"jwt"`
 }
 
 func LoadConfig(path string) (*Config, error) {

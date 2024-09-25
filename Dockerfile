@@ -2,7 +2,7 @@
 FROM golang:latest AS builder
 
 # Add Maintainer Info
-LABEL maintainer="LiveChamp <livechamp@ninjavan.co>"
+LABEL maintainer="mark"
 
 # Set the Current Working Directory inside the container
 WORKDIR /app

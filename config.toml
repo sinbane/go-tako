@@ -24,6 +24,9 @@ allowed_origins=["*"]
 allowed_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
 allowed_headers=["Content-Type", "Authorization"]
 
+[jwt]
+secret="secret"
+
 [circuit_breakers.default]
 max_requests=10
 interval=10
