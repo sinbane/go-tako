@@ -24,9 +24,14 @@ func LoadConfig(path string) (*Config, error) {
 		return nil, err
 	}
 
+	// respect env variables if set
 	serverId, ok := os.LookupEnv("K8S_POD_NAME")
 	if ok {
 		config.ServerId = serverId
+	}
+	jwtSecret, ok := os.LookupEnv("JWT_SECRET")
+	if ok {
+		config.JWT.Secret = jwtSecret
 	}
 
 	return &config, nil

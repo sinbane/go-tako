@@ -25,7 +25,19 @@ allowed_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
 allowed_headers=["Content-Type", "Authorization"]
 
 [jwt]
+# don't commit the secret to the repo directly
+# use k8s sealed-secret or other secret management service
 secret="secret"
+#bypass urls
+bypass_urls=["/auth/login"]
+
+[header]
+# bypass urls
+bypass_urls=["/auth/login"]
+# sensitive headers that are not allowed to be carried from client to server
+protected=["Authorization"]
+# custom headers that are required
+required=["X-Request-Id"]
 
 [circuit_breakers.default]
 max_requests=10
