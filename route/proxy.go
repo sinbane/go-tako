@@ -5,15 +5,23 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"path"
+	"strings"
 )
 
-func ReverseProxy(target string) http.HandlerFunc {
+func ReverseProxy(rule Rule) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		targetURL, err := url.Parse(target)
+		originalURL := r.URL
+		targetURL, err := url.Parse(rule.Target)
 		if err != nil {
+			log.Printf("Error parsing target url: %v", err)
 			http.Error(w, "Bad gateway", http.StatusBadGateway)
 			return
 		}
+
+		// Preserve the suffix of the original path
+		targetURL.Path = path.Join(targetURL.Path, strings.TrimPrefix(originalURL.Path, rule.Prefix))
+		targetURL.RawQuery = originalURL.RawQuery // Preserve query parameters
 
 		// Create a new request to the target URL
 		req, err := http.NewRequest(r.Method, targetURL.String(), r.Body)

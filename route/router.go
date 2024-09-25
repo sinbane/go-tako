@@ -9,7 +9,7 @@ func Router(rules []Rule) http.Handler {
 
 	// Proxy to backend microservices based on rules
 	for _, rule := range rules {
-		mux.Handle(rule.Prefix, ReverseProxy(rule.Target))
+		mux.Handle(rule.Prefix, ReverseProxy(rule))
 	}
 
 	return mux
