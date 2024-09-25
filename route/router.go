@@ -4,12 +4,13 @@ import (
 	"net/http"
 )
 
-func Router() http.Handler {
+func Router(rules []Rule) http.Handler {
 	mux := http.NewServeMux()
 
-	// Proxy to backend microservices
-	mux.Handle("/api/v1/users/", ReverseProxy("http://localhost:8081"))
-	mux.Handle("/api/v1/orders/", ReverseProxy("http://localhost:8082"))
+	// Proxy to backend microservices based on rules
+	for _, rule := range rules {
+		mux.Handle(rule.Prefix, ReverseProxy(rule.Target))
+	}
 
 	return mux
 }

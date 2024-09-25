@@ -1,15 +1,19 @@
 package middleware
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/sinbane/tako/config"
+)
 
 type Middleware func(http.Handler) http.Handler
 
-type Middlewares []func(http.Handler) http.Handler
+type MiddlewareFactory func(*config.Config) Middleware
 
 // Chain applies a series of middlewares to a http.Handler
-func Chain(h http.Handler, middlewares ...Middleware) http.Handler {
-	for i := len(middlewares) - 1; i >= 0; i-- {
-		h = middlewares[i](h)
+func Chain(cfg *config.Config, h http.Handler, middlewareFactories ...MiddlewareFactory) http.Handler {
+	for i := len(middlewareFactories) - 1; i >= 0; i-- {
+		h = middlewareFactories[i](cfg)(h)
 	}
 	return h
 }

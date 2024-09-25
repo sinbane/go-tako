@@ -2,15 +2,20 @@ package config
 
 import (
 	"github.com/BurntSushi/toml"
-	"github.com/sinbane/tako/middleware"
 	"github.com/sinbane/tako/route"
 )
 
 type Config struct {
-	Port     int             `toml:"port"`
-	Rules    []route.Rule    `toml:"rules"`
-	CORS     middleware.CORS `toml:"cors"`
-	ServerId string          `toml:"server_id"`
+	Port     int          `toml:"port"`
+	Rules    []route.Rule `toml:"rules"`
+	CORS     CORS         `toml:"cors"`
+	ServerId string       `toml:"server_id"`
+}
+
+type CORS struct {
+	AllowedOrigins []string `toml:"allowed_origins"`
+	AllowedMethods []string `toml:"allowed_methods"`
+	AllowedHeaders []string `toml:"allowed_headers"`
 }
 
 func LoadConfig(path string) (*Config, error) {

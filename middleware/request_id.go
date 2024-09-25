@@ -6,15 +6,19 @@ import (
 	"encoding/base64"
 	"net/http"
 	"strings"
+
+	"github.com/sinbane/tako/config"
 )
 
 // RequestID is a middleware that generates a unique request ID for each incoming request
-func RequestID(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		requestID := encode(r.RemoteAddr, 16)
-		w.Header().Set(HeaderRequestId, requestID)
-		next.ServeHTTP(w, r)
-	})
+func RequestID(cfg *config.Config) Middleware {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			requestID := encode(r.RemoteAddr, 16)
+			w.Header().Set(HeaderRequestId, requestID)
+			next.ServeHTTP(w, r)
+		})
+	}
 }
 
 // Generate a encoded string of a fixed length

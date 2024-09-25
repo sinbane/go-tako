@@ -3,6 +3,8 @@ package middleware
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/sinbane/tako/config"
 )
 
 const (
@@ -17,14 +19,16 @@ var protectedHeaders = []string{
 	HeaderRequestId,
 }
 
-func CheckHeaders(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		for _, header := range protectedHeaders {
-			if r.Header.Get(header) != "" {
-				http.Error(w, fmt.Sprintf("Header %s is protected", header), http.StatusBadRequest)
-				return
+func CheckHeaders(cfg *config.Config) Middleware {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			for _, header := range protectedHeaders {
+				if r.Header.Get(header) != "" {
+					http.Error(w, fmt.Sprintf("Header %s is protected", header), http.StatusBadRequest)
+					return
+				}
 			}
-		}
-		next.ServeHTTP(w, r)
-	})
+			next.ServeHTTP(w, r)
+		})
+	}
 }

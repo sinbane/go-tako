@@ -19,10 +19,11 @@ func main() {
 	}
 
 	// Initialize the router
-	router := route.Router()
+	router := route.Router(cfg.Rules)
 
 	// Chain middlewares
 	handler := middleware.Chain(
+		cfg,
 		router,
 		middleware.Logging,
 		middleware.RateLimit,
