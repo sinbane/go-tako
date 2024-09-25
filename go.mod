@@ -7,3 +7,5 @@ require (
 	github.com/gorilla/websocket v1.5.3
 	golang.org/x/time v0.6.0
 )
+
+require github.com/sony/gobreaker v1.0.0

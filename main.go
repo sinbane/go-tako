@@ -24,13 +24,14 @@ func main() {
 	// Chain middlewares
 	handler := middleware.Chain(
 		cfg,
-		router,
+		router, //the last handler in the chain
 		middleware.Logging,
 		middleware.CheckHeaders,
 		middleware.RateLimit,
 		middleware.Cors,
 		middleware.RequestID,
 		middleware.RemoteIP,
+		middleware.CircuitBreaker,
 	)
 
 	// Start the server

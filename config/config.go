@@ -1,21 +1,18 @@
 package config
 
 import (
+	"os"
+
 	"github.com/BurntSushi/toml"
 	"github.com/sinbane/tako/route"
 )
 
 type Config struct {
-	Port     int          `toml:"port"`
-	Rules    []route.Rule `toml:"rules"`
-	CORS     CORS         `toml:"cors"`
-	ServerId string       `toml:"server_id"`
-}
-
-type CORS struct {
-	AllowedOrigins []string `toml:"allowed_origins"`
-	AllowedMethods []string `toml:"allowed_methods"`
-	AllowedHeaders []string `toml:"allowed_headers"`
+	Port            int                       `toml:"port"`
+	Rules           []route.Rule              `toml:"rules"`
+	CORS            CORS                      `toml:"cors"`
+	ServerId        string                    `toml:"server_id"`
+	CircuitBreakers map[string]CircuitBreaker `toml:"circuit_breakers"`
 }
 
 func LoadConfig(path string) (*Config, error) {
@@ -23,6 +20,11 @@ func LoadConfig(path string) (*Config, error) {
 	_, err := toml.DecodeFile(path, &config)
 	if err != nil {
 		return nil, err
+	}
+
+	serverId, ok := os.LookupEnv("K8S_POD_NAME")
+	if ok {
+		config.ServerId = serverId
 	}
 
 	return &config, nil

@@ -16,6 +16,7 @@ func Router(rules []Rule) http.Handler {
 }
 
 type Rule struct {
-	Prefix string
-	Target string
+	ID     string `toml:"id"`
+	Prefix string `toml:"prefix"`
+	Target string `toml:"target"`
 }

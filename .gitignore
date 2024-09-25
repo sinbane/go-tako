@@ -30,6 +30,7 @@ Thumbs.db
 
 # Debug files
 debug
+__debug_bin*
 
 # Project-specific build artifacts
 /tako
