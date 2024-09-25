@@ -1,10 +1,18 @@
 port=8080
 
 # Route configuration for proxy
+
+# "prefix" can accept all patterns supported by ServeMux, 
+# it's recommended to use the url with trailing slash only.
+# IMPORTANT: 
+# The patterns may have differences depending on Go's version.
+# see https://pkg.go.dev/net/http#hdr-Patterns-ServeMux
+
+# "target" is the target microservice address, can be any valid URL
 rules=[
-    {prefix="/auth", target="http://auth-svc:8080"},
-    {prefix="/echo", target="http://echo-svc:8080"},
-    {prefix="/webhook", target="http://webhook-svc:8080"},
+    {prefix="/auth/", target="http://auth-svc:8080"},
+    {prefix="/echo/", target="http://echo-svc:8080"},
+    {prefix="/webhook/", target="http://webhook-svc:8080"},
 ]
 
 server_id="go-tako-test-1" #unique id when deploying multiple tako instances

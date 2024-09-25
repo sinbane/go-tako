@@ -14,6 +14,7 @@ func Cors(cfg *config.Config) Middleware {
 			w.Header().Set("Access-Control-Allow-Methods", strings.Join(cfg.CORS.AllowedMethods, ", "))
 			w.Header().Set("Access-Control-Allow-Headers", strings.Join(cfg.CORS.AllowedHeaders, ", "))
 
+			//CORS preflight request
 			if r.Method == http.MethodOptions && r.Header.Get("Access-Control-Request-Method") != "" {
 				w.Header().Add("Vary", "Origin")
 				w.Header().Add("Vary", "Access-Control-Request-Method")
