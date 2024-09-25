@@ -29,8 +29,8 @@ secret="secret"
 
 [circuit_breakers.default]
 max_requests=10
-interval=10
-timeout=10
+interval=10 #seconds
+timeout=10 #seconds
 min_requests=5
 failure_ratio=0.5
 

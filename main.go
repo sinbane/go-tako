@@ -26,7 +26,7 @@ func main() {
 		cfg,
 		router, //the last handler in the chain
 		middleware.Logging,
-		middleware.CheckHeaders,
+		middleware.Header,
 		middleware.RateLimit,
 		middleware.Cors,
 		middleware.RequestID,

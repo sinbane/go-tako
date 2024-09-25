@@ -14,6 +14,7 @@ type Config struct {
 	ServerId        string                    `toml:"server_id"`
 	CircuitBreakers map[string]CircuitBreaker `toml:"circuit_breakers"`
 	JWT             JWT                       `toml:"jwt"`
+	Header          Header                    `toml:"header"`
 }
 
 func LoadConfig(path string) (*Config, error) {

@@ -20,5 +20,13 @@ type CircuitBreaker struct {
 
 // JWT middleware config
 type JWT struct {
-	Secret string `toml:"secret"`
+	Secret     string   `toml:"secret"`
+	BypassURLs []string `toml:"bypass_urls"`
+}
+
+// Header middleware config
+type Header struct {
+	BypassURLs []string `toml:"bypass_urls"`
+	Protected  []string `toml:"protected"` // sensitive headers that are not allowed to be carried from client to server
+	Required   []string `toml:"required"`  // custom headers that are required
 }

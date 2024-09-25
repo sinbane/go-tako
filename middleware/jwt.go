@@ -13,6 +13,14 @@ import (
 func JWT(cfg *config.Config) Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// Check if the request URL is in the bypass URLs
+			for _, bypassURL := range cfg.JWT.BypassURLs {
+				if r.URL.Path == bypassURL {
+					next.ServeHTTP(w, r)
+					return
+				}
+			}
+
 			// Extract the token from the Authorization header
 			auth := r.Header.Get("Authorization")
 			if auth == "" {
