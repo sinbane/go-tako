@@ -1,0 +1,15 @@
+port=8080
+
+# Route configuration for proxy
+rules=[
+    {prefix="/auth", target="http://auth-svc:8080"},
+    {prefix="/echo", target="http://echo-svc:8080"},
+    {prefix="/webhook", target="http://webhook-svc:8080"},
+]
+
+server_id="go-tako-test-1" #unique id when deploying multiple tako instances
+
+[cors]
+allowed_origins=["*"]
+allowed_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+allowed_headers=["Content-Type", "Authorization"]
