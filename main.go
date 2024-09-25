@@ -26,11 +26,11 @@ func main() {
 		cfg,
 		router,
 		middleware.Logging,
+		middleware.CheckHeaders,
 		middleware.RateLimit,
 		middleware.Cors,
 		middleware.RequestID,
 		middleware.RemoteIP,
-		middleware.CheckHeaders,
 	)
 
 	// Start the server
