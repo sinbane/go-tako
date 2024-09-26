@@ -1,0 +1,54 @@
+port=8080
+
+# Route configuration for proxy
+
+# "prefix" can accept all patterns supported by ServeMux, 
+# it's recommended to use the url with trailing slash only.
+# IMPORTANT: 
+# The patterns may have differences depending on Go's version.
+# see https://pkg.go.dev/net/http#hdr-Patterns-ServeMux
+
+# "target" is the target microservice address, can be any valid URL
+rules=[
+    {prefix="/auth/", target="http://auth-svc:8080"},
+    {id="echo", prefix="/echo/", target="http://echo-svc:8080"},
+    {prefix="/webhook/", target="http://webhook-svc:8080"},
+]
+
+# unique id when deploying multiple tako instances
+# it's recommended to use the pod name in k8s
+server_id="go-tako-test-1"
+
+[cors]
+allowed_origins=["*"]
+allowed_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+allowed_headers=["Content-Type", "Authorization"]
+
+[jwt]
+# don't commit the secret to the repo directly
+# use k8s sealed-secret or other secret management service
+secret="secret"
+#bypass urls
+bypass_urls=["/auth/login"]
+
+[header]
+# bypass urls
+bypass_urls=["/auth/login"]
+# sensitive headers that are not allowed to be carried from client to server
+protected=["Authorization"]
+# custom headers that are required
+required=["X-Request-Id"]
+
+[circuit_breakers.default]
+max_requests=10
+interval=10 #seconds
+timeout=10 #seconds
+min_requests=5
+failure_ratio=0.5
+
+[circuit_breakers.echo]
+max_requests=20
+interval=10
+timeout=3
+min_requests=3
+failure_ratio=0.5
