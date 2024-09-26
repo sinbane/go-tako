@@ -27,10 +27,10 @@ func main() {
 		router, //the last handler in the chain
 		middleware.Logging,
 		middleware.Header,
+		middleware.RemoteIP,
 		middleware.RateLimit,
 		middleware.Cors,
 		middleware.RequestID,
-		middleware.RemoteIP,
 		middleware.CircuitBreaker,
 		middleware.JWT,
 	)

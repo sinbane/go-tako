@@ -8,8 +8,8 @@ import (
 	"golang.org/x/time/rate"
 )
 
-var limiter = rate.NewLimiter(1, 5) // 1 request per second, with a burst of 5
-var ipRateLimiters = make(map[string]*rate.Limiter)
+// limiters is a map of IP addresses to their respective rate limiters.
+var limiters = make(map[string]*rate.Limiter)
 var mu sync.Mutex
 
 func RateLimit(cfg *config.Config) Middleware {
@@ -18,11 +18,12 @@ func RateLimit(cfg *config.Config) Middleware {
 			ip := r.RemoteAddr
 
 			mu.Lock()
-			if _, exists := ipRateLimiters[ip]; !exists {
-				ipRateLimiters[ip] = rate.NewLimiter(1, 5)
+			if _, exists := limiters[ip]; !exists {
+				limiters[ip] = rate.NewLimiter(1, 5) // 1 request per second, with a burst of 5
 			}
-			limiter := ipRateLimiters[ip]
 			mu.Unlock()
+
+			limiter := limiters[ip]
 
 			if !limiter.Allow() {
 				http.Error(w, "Rate limit exceeded", http.StatusTooManyRequests)
