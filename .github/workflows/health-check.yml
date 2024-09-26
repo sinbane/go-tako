@@ -1,0 +1,51 @@
+name: Docker Image Health Check
+
+on:
+  pull_request:
+    branches: [main, wip]
+    paths-ignore: ["README.md", ".gitignore", ".github/**", "k8s/**"]
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Build and health check image"
+        type: boolean
+        required: true
+
+env:
+  APP_NAME: bijin #change to your app name
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build image
+        uses: docker/build-push-action@v5
+        id: build-image
+        with:
+          context: .
+          load: true
+          provenance: false
+          sbom: false
+          tags: ${{ env.APP_NAME }}
+
+      - name: Run Docker Image
+        id: run-image
+        run: |
+          ID=$(docker run -d --rm ${{ env.APP_NAME }})
+          echo container=$ID >> $GITHUB_OUTPUT
+
+      - name: Health checking
+        if: ${{ success() }}
+        run: |
+          STATE=$(docker container inspect -f '{{.State.Running}}' ${{ steps.run-image.outputs.container }})
+          if [ "$STATE" != "true" ]; then
+              exit 1
+          fi
+
+      - name: Post checking
+        run: docker stop $(docker ps -a -q)

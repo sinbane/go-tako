@@ -1,0 +1,81 @@
+name: Docker Image CI
+
+on:
+  push:
+    tags: [v*]
+    branches: [main, wip]
+    paths-ignore: ["README.md", ".gitignore", ".github/**", "k8s/**"]
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Are you sure you want to Publish Docker Image?"
+        type: boolean
+        required: true
+
+env:
+  APP_NAME: tako #change to your app name
+
+jobs:
+  build-go:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Go Environment
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: "go.mod"
+
+      - name: Install dependencies
+        run: go get .
+
+      - name: Build source code
+        run: go build -v ./...
+
+      - name: Run tests
+        run: go test -v./...
+
+  build-and-publish:
+    runs-on: ubuntu-latest
+    needs: build-go
+    if: ${{ github.ref !='refs/heads/main' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update building hash by latest commit
+        run: sed -i "/COMMIT_HASH/c\var COMMIT_HASH = \"$(git rev-parse HEAD)\"" version.go
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          buildkitd-flags: --debug
+
+      - name: Docker meta
+        uses: docker/metadata-action@v5
+        id: meta
+        with:
+          images: |
+            ghcr.io/sinbane/${{ env.APP_NAME }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern=v{{major}}
+            type=edge,branch=wip
+
+      - name: Login to Github Docker Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        id: build-and-push
+        with:
+          context: .
+          push: true
+          provenance: false
+          sbom: false
+          tags: ${{ steps.meta.outputs.tags }}
