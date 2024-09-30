@@ -10,10 +10,12 @@ import (
 	"github.com/sony/gobreaker"
 )
 
+// PanelBoard is a struct that holds all the circuit breakers.
 type PanelBoard struct {
 	breakers map[string]*gobreaker.CircuitBreaker
 }
 
+// NewPanelBoard creates a new PanelBoard with the given configuration.
 func NewPanelBoard(cfg *config.Config) *PanelBoard {
 	breakers := make(map[string]*gobreaker.CircuitBreaker)
 
@@ -36,6 +38,7 @@ func NewPanelBoard(cfg *config.Config) *PanelBoard {
 	return &PanelBoard{breakers: breakers}
 }
 
+// CircuitBreaker is a middleware that implements the circuit breaker pattern.
 func CircuitBreaker(cfg *config.Config) Middleware {
 	board := NewPanelBoard(cfg)
 
